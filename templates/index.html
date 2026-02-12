@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Predictor</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">🌤️ Weather Predictor</h1>
+
+      <form id="weather-form" action="/predict" method="post">
+        <!-- Location Selection -->
+        <div class="input-group">
+          <label for="location-option">Choose Location Input Type:</label>
+          <select id="location-option">
+            <option value="coords">Enter Latitude & Longitude</option>
+            <option value="manual">Enter Location Name</option>
+            <option value="auto">Use Current Location</option>
+          </select>
+        </div>
+
+        <!-- Latitude & Longitude Inputs -->
+        <div id="coords-input">
+          <div class="input-group">
+            <label>Latitude:</label>
+            <input type="text" name="latitude" id="latitude" required />
+          </div>
+          <div class="input-group">
+            <label>Longitude:</label>
+            <input type="text" name="longitude" id="longitude" required />
+          </div>
+        </div>
+
+        <!-- Location Name Input -->
+        <div id="manual-input" style="display: none">
+          <div class="input-group">
+            <label>Location Name:</label>
+            <input type="text" id="location-name" />
+            <button type="button" onclick="fetchCoordsFromLocation()">
+              Get Coordinates
+            </button>
+          </div>
+        </div>
+
+        <!-- User-Entered Weather Data -->
+        <div class="input-group">
+          <label>Temperature (°C):</label>
+          <input type="text" name="temperature_celsius" required />
+        </div>
+
+        <div class="input-group">
+          <label>Wind Speed (mph):</label>
+          <input type="text" name="wind_mph" required />
+        </div>
+
+        <div class="input-group">
+          <label>Pressure (mb):</label>
+          <input type="text" name="pressure_mb" required />
+        </div>
+
+        <div class="input-group">
+          <label>Humidity (%):</label>
+          <input type="text" name="humidity" required />
+        </div>
+
+        <button type="submit" class="btn">Predict</button>
+      </form>
+
+      {% if prediction %}
+      <div class="results">
+        <h2>Prediction:</h2>
+        <p>
+          <strong>Predicted Temperature (°C):</strong> {{ prediction.temperature
+          }}
+        </p>
+        <p>
+          <strong>Predicted Wind Speed (mph):</strong> {{ prediction.wind_speed
+          }}
+        </p>
+        <p>
+          <strong>Predicted Humidity (%):</strong> {{ prediction.humidity }}
+        </p>
+        <p>
+          <strong>Predicted Pressure (mb):</strong> {{ prediction.pressure }}
+        </p>
+        <p>
+          <strong>Predicted Cloud Cover (%):</strong> {{ prediction.cloud_cover
+          }}
+        </p>
+        <p>
+          <strong>Predicted Precipitation (mm):</strong> {{
+          prediction.precipitation }}
+        </p>
+        <p><strong>Predicted UV Index:</strong> {{ prediction.uv_index }}</p>
+        <p>
+          <strong>Predicted Weather Condition:</strong> {{
+          prediction.weather_condition }}
+        </p>
+        <form action="/download_report" method="post">
+          {% for key, value in prediction.items() %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}" />
+          {% endfor %}
+          <button type="submit" class="btn download-btn">
+            Download Report
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
